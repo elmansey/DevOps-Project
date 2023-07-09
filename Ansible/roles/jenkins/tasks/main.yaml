@@ -1,0 +1,37 @@
+- name: update apt 
+  apt:
+    update_cache: yes
+
+- name: install java 11
+  apt:
+    name: openjdk-11-jre-headless
+    state: present
+
+- name: Import Jenkins repository key
+  get_url:
+    url: "{{ jenkinsKeyLink }}"
+    dest: "{{ jenkinsKeyPath }}"
+    mode: '0644'
+
+- name: Add Jenkins repository to sources.list.d
+  lineinfile:
+    path: "{{ jenkinsList }}"
+    line: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
+    create: yes
+
+- name: update apt 
+  apt:
+    update_cache: yes
+
+- name: install jenkins 
+  apt:
+    name: jenkins
+    state: present
+
+- name: Start jenkins
+  systemd:
+    name: jenkins
+    state: started
+
+
+

@@ -1,0 +1,14 @@
+- name: install nexus
+  hosts: tag_Name_nexus_ec2
+  roles:
+    - roles/nexus
+
+- name: install jenkins 
+  hosts: tag_Name_jenkins_ec2
+  roles:
+    - roles/jenkins
+
+- name: install sonerqube 
+  hosts: tag_Name_sonerqube_ec2
+  roles:
+    - roles/sonerqube
