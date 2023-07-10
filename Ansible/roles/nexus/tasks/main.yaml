@@ -1,1 +1,88 @@
 
+- name: update apt 
+  apt:
+    update_cache: yes
+
+- name: install java 8
+  apt:
+    name: openjdk-8-jre-headless
+    state: present
+
+
+
+- name: Download nexus
+  get_url:
+    url: "{{ nexus_download_link }}"
+    dest: /opt/nexus.tar.gz
+
+
+- name: untar nexus installer 
+  unarchive:
+    src: /opt/nexus.tar.gz
+    dest: /opt/
+    remote_src: true
+
+
+- name: find nexus folder with version name 
+  find:
+    paths: /opt/
+    patterns:
+      - "nexus-*"
+    file_type: directory
+  register: folder_full_name_with_version
+
+
+- name: check if nexus folder status
+  stat:
+    path: /opt/nexus
+  register: folder_status
+
+
+- name: rename folder to remove version from name 
+  shell: mv {{folder_full_name_with_version.files[0].path }} /opt/nexus
+  when: folder_status.stat.exists == false
+
+
+- name: create nexus group if not exist 
+  group:
+    name: nexus
+    state: present
+
+
+- name: create nexus user 
+  user:
+    name: nexus 
+    group: nexus
+
+
+- name: make nexus user owner for nexus folder 
+  file:
+    path: "{{ item }}"
+    recurse: yes
+    state: directory
+    owner: nexus
+    group: nexus
+  loop:
+    "{{directories}}"
+
+
+- name: make run_as_user="nexus" in file /opt/nexus/bin/nexus.rc
+  replace:
+    path: /opt/nexus/bin/nexus.rc
+    regexp: '(.*)run_as_user="(.*)"'
+    replace: run_as_user="nexus"
+    
+
+- name: make nexus as a service and start it 
+  copy: 
+    src: "{{nexus_service_file}}"
+    dest: "{{ systemd_configuration_path }}"
+    owner: nexus
+    group: nexus
+
+
+- name: start nexus service 
+  systemd:
+    name: nexus
+    state: started
+    enabled: true

@@ -18,6 +18,7 @@ module EC2s {
   source = "./EC2s"
   ubuntu_ami = module.DataSource.ubuntu_ami
   instance_type = var.instance_type
+  nexus_instance_type = var.nexus_instance_type
   jenkins_sg = module.Network.jenkins_sg_id
   public_subnet_one = module.Network.public_subnet_one_id
   public_subnet_two = module.Network.public_subnet_two_id
@@ -26,4 +27,5 @@ module EC2s {
   sonerqube_sg = module.Network.sonerqube_sg_id
   availability_zone_one = var.availability_zone_one
   availability_zone_two = var.availability_zone_two
+  sonerqube_instance_type=var.sonerqube_instance_type
 }

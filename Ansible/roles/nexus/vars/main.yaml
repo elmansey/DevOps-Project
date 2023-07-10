@@ -1,0 +1,6 @@
+nexus_download_link: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+nexus_service_file: nexus.service
+systemd_configuration_path: /etc/systemd/system/nexus.service
+directories:
+  - /opt/nexus
+  - /opt/sonatype-work

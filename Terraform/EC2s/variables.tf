@@ -8,4 +8,5 @@ variable nexus_sg  {type=string}
 variable allow_ssh  {type=string}
 variable availability_zone_two  {type=string}
 variable sonerqube_sg  {type=string}
-
+variable nexus_instance_type   {type=string}
+variable sonerqube_instance_type   {type=string}

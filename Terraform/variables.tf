@@ -7,4 +7,5 @@ variable subnet_cidr_block_four   {type=string}
 variable availability_zone_one   {type=string}
 variable availability_zone_two   {type=string}
 variable instance_type   {type=string}
-
+variable nexus_instance_type   {type=string}
+variable sonerqube_instance_type   {type=string}

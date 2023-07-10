@@ -1,1 +1,112 @@
+- name: update apt 
+  apt:
+    update_cache: yes
 
+- name: install java 11
+  apt:
+    name: openjdk-11-jre-headless,unzip
+    state: present
+
+- name: Install PostgreSQL
+  apt:
+    name: postgresql,postgresql-contrib,acl,libpq-dev,python3-psycopg2
+    state: latest
+    update_cache: yes
+
+
+- name: Create db user
+  become: true
+  become_user: postgres
+  postgresql_user:
+    state: present
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+
+- name: Create a sonarqube db
+  postgresql_db:
+    state: present
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+  become: true
+  become_user: postgres
+
+- name: "Grant db user access to app db"
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    type: database
+    database: "{{ db_name }}"
+    roles: "{{ db_user }}"
+    grant_option: no
+    privs: all
+
+- name: make group called sonar 
+  ansible.builtin.group:
+    name: sonar
+    state: present
+
+- name: make user called sonar to sonarqube 
+  user:
+    name: sonar
+    group: sonar
+
+- name: check if sonarqube folder status
+  stat:
+    path: /opt/sonarqube
+  register: folder_status
+
+- name: Download sonarqube
+  get_url:
+    url: "{{ sonarqubeLink }}"
+    dest: /opt/sonarqube.zip
+  when: folder_status.stat.exists == false
+
+- name: Extract /opt/sonarqube.zip
+  unarchive:
+    src: /opt/sonarqube.zip
+    dest: /opt
+    remote_src: yes
+  when: folder_status.stat.exists == false
+
+- name: check if sonerqube folder status
+  stat:
+    path: /opt/sonarqube
+  register: folder_status
+
+
+- name: rename folder to remove version from name 
+  shell: mv /opt/sonarqube-* /opt/sonarqube
+  when: folder_status.stat.exists == false
+
+
+- name: Change /opt/sonarqube ownership 
+  file:
+    path: /opt/sonarqube
+    state: directory
+    recurse: yes
+    owner: sonar
+    group: sonar
+
+
+- name: Copy sonar.properties to /opt/sonarqube/conf/
+  ansible.builtin.copy:
+    src: sonar.properties
+    dest: /opt/sonarqube/conf/
+    owner: sonar
+    group: sonar
+
+- name: Copy sonar.service to /etc/systemd/system/
+  ansible.builtin.copy:
+    src: sonar.service
+    dest: /etc/systemd/system/
+    owner: sonar
+    group: sonar
+
+
+- name: Make sure a service unit is running
+  systemd:
+    state: started
+    name: sonar
+    enabled: true
+    daemon_reload: yes
+  become: true

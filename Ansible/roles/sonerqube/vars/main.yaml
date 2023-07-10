@@ -1,0 +1,4 @@
+db_name: sonarqube
+db_user: sonaruser
+db_password: "12345678"
+sonarqubeLink: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.3.zip
