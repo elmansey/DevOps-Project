@@ -10,3 +10,4 @@ output allow_ssh_sg_id {value= module.SecurityGroups.allow_ssh_sg_id}
 output jenkins_sg_id {value= module.SecurityGroups.jenkins_sg_id}
 output nexus_sg_id {value= module.SecurityGroups.nexus_sg_id}
 output sonerqube_sg_id {value= module.SecurityGroups.sonerqube_sg_id}
+output Eks_cluster_sg_id {value= module.SecurityGroups.Eks_cluster_sg}

@@ -29,3 +29,23 @@ module EC2s {
   availability_zone_two = var.availability_zone_two
   sonerqube_instance_type=var.sonerqube_instance_type
 }
+
+module EKS {
+  source="./EKS"
+  EksName=var.EksName
+  node_group_name=var.node_group_name
+  Kubernetes_version=var.Kubernetes_version
+  private_subnet_ids=[
+    module.Network.private_subnet_one_id,
+    module.Network.private_subnet_two_id
+  ]
+  Eks_cluster_sg_id=module.Network.Eks_cluster_sg_id
+  ami_type=var.ami_type
+  capacity_type=var.capacity_type
+  disk_size=var.disk_size
+  instance_types=var.instance_types
+  desired_size=var.desired_size
+  max_size=var.max_size
+  min_size=var.min_size
+  max_unavailable=var.max_unavailable
+}
