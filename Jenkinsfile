@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         NEXUS_DOCKER_REPO_PORT = 5000
-        NEXUS_REPOSITORY = "ec2-3-74-164-47.eu-central-1.compute.amazonaws.com:${NEXUS_DOCKER_REPO_PORT}/repository/docker-repo"
+        NEXUS_REPOSITORY = 'ec2-3-74-164-47.eu-central-1.compute.amazonaws.com:${NEXUS_DOCKER_REPO_PORT}/repository/docker-repo'
     }
     stages {
         stage("mvn build") {
@@ -17,7 +17,9 @@ pipeline {
         }
         stage("build docker image"){
             steps{
-                sh 'docker build -t ${NEXUS_repository}/simple-java-tomcat-app:${BUILD_NUMBER} .'
+                sh """
+                    docker build -t ${NEXUS_repository}/simple-java-tomcat-app:${BUILD_NUMBER} .
+                """
             }
         }
     }
