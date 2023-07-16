@@ -18,7 +18,7 @@ pipeline {
         stage("build docker image"){
             steps{
                 sh """
-                    docker build -t ${NEXUS_repository}/simple-java-tomcat-app:${BUILD_NUMBER} .
+                    docker build -t ${NEXUS_repository}/simple-java-tomcat-app:${BUILD_NUMBER}.0.0 .
                 """
             }
         }
